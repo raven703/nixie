@@ -12,6 +12,15 @@ lamp_nix = NixieLamp() # prepare Nixie class
 
 with open('boot.ini', 'r') as input:
     settings = json.load(input)
+    
+def display_ip_address(ip_addr):
+    ip_parts = [int(part) for part in ip_addr.split('.')]  # Convert each part to an integer
+    formatted_parts = [f"{octet:04d}" for octet in ip_parts]
+    
+    for digit in formatted_parts:
+        lamp_nix.display_number(f'{digit}') # in string
+        time.sleep(1.3)
+    
 
 for i in range(4):
     buttonPin = Pin(13, Pin.IN, Pin.PULL_DOWN) # check button for REST
@@ -29,10 +38,18 @@ for i in range(4):
         break
 
 if settings['DEFAULT_WIFI_MODE'] == 'station':
-    print(start_access_station())
+    ip_addr = start_access_station()
+    print('from boot1 ', ip_addr)
+    display_ip_address(ip_addr)
+        
+    
 else:
     print('connecting to wifi station')
-    print(start_connect_point())
+    ip_addr = start_connect_point()
+    print('from boot2 ', ip_addr)
+    display_ip_address(ip_addr)
+    
+    
 
 setup_RTC()
 

@@ -4,7 +4,7 @@ import json
 from machine import Pin, PWM, RTC, ADC
 from utils import *
 import time
-import random
+#import random
 
 from nixie_lamps import NixieLamp
 import asyncio

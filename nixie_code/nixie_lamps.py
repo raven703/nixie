@@ -169,10 +169,18 @@ class NixieLamp:
                     self.display_number(number)
                     time.sleep(0.1)
    
-        effects = [show_digit_slide, show_random_number, show_digit_count]
-        effect = choice(effects)
-        print(effect)
-        effect()
+        random_effect = randint(1, 3)
+        print(random_effect)
+        if random_effect == 1:
+            show_digit_slide()
+        elif random_effect == 2:
+            show_random_number()
+        else:
+            show_digit_count()
+            
+            
+            
+
         return True 
 
     

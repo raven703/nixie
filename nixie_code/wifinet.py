@@ -75,8 +75,8 @@ def start_access_station(SSID=settings['SSID'], password=settings['SSID_PWD']):
     print(SSID, password)
     ap.config(max_clients=10) # set how many clients can connect to the network
     ip_config = ap.ifconfig()
-    print(ap.ifconfig())
-    return ap.ifconfig()
+    #print('from sas ', ip_config[0])
+    return ip_config[0]
 
 def start_connect_point():
     with open('boot.ini', 'r') as input:
@@ -98,8 +98,11 @@ def start_connect_point():
                 print("Can`t connect to WiFi")
                 print("setting up default wifi station")
 
-                start_access_station(SSID='INDINIX', password='12345678')                             
-                break
+                ip_addr = start_access_station(SSID='INDINIX', password='12345678')
+                return ip_addr
+                
+    print('wlan.ifconfig')
+    print(wlan.ifconfig())
     
-    return wlan.ifconfig()
+    return wlan.ifconfig()[0]
 
