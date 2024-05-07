@@ -25,10 +25,10 @@ class NixieLamp:
         
         # setup pins and PWM mode 
         self.pwm_lamp_pins = [
-                 PWM(Pin(18), freq=2000, duty=brightness),
-                 PWM(Pin(19), freq=2000, duty=brightness),
-                 PWM(Pin(25), freq=2000, duty=brightness),
-                 PWM(Pin(26), freq=2000, duty=brightness),
+                 PWM(Pin(18), freq=1000, duty=brightness),
+                 PWM(Pin(19), freq=1000, duty=brightness),
+                 PWM(Pin(25), freq=1000, duty=brightness),
+                 PWM(Pin(26), freq=1000, duty=brightness),
                 ]
         self.brightness = brightness
         self.brightness_max = 1023
@@ -170,9 +170,9 @@ class NixieLamp:
                     time.sleep(0.1)
    
         effects = [show_digit_slide, show_random_number, show_digit_count]
-        choice(effects)()
-        
-        
+        effect = choice(effects)
+        print(effect)
+        effect()
         return True 
 
     

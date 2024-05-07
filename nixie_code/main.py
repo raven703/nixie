@@ -208,8 +208,8 @@ async def show_time():
              
              lamp_nix.set_brightness(brightness, brightness, brightness, brightness)
 
-             print("ADC value:", adc_value)
-             print('brightness', brightness)
+             #print("ADC value:", adc_value)
+             #print('brightness', brightness)
              
              await asyncio.sleep(6)
              
