@@ -17,7 +17,7 @@
 from microdot1 import Microdot, send_file, Response, Request
 import json
 
-from machine import Pin, PWM, RTC, ADC, Pin
+from machine import Pin, PWM, RTC, ADC
 from utils import *
 from config import Config
 import time
@@ -37,14 +37,6 @@ rtc=RTC()
 app = Microdot()
 lamp_nix = NixieLamp(brightness=612) # prepare Nixie class, 200 duty cycle, brightness
 
-
-led_pin = 23
-blink_led = PWM(Pin(led_pin), freq=1000, duty=512)
-
-
-
-    
-    
 
 # set brightness level from settings
 settings = load_settings()
@@ -229,31 +221,15 @@ def show_time():
 def show_random_number():
     while True:
         lamp_nix.display_digit_effect()     
-        time.sleep(200)
+        time.sleep(120)
 
-
-def show_blink_led():
-    while True:
-        # Increase duty cycle from 0 to 1023 (maximum brightness)
-        for duty_cycle in range(812):
-            blink_led.duty(duty_cycle)
-            time.sleep(0.001)  # Wait a short time
-        # Decrease duty cycle from 1023 to 0
-        for duty_cycle in range(812, -1, -1):
-            blink_led.duty(duty_cycle)
-            time.sleep(0.001)  # Wait a short time
 
 gc.collect()
 print(gc.mem_free())
 
-
-
-    
-    
 # Start the threads
 _thread.start_new_thread(show_time, ())
 _thread.start_new_thread(show_random_number, ())
-_thread.start_new_thread(show_blink_led, ())
 
 # Start the Microdot web server
 app.run(port=80, debug=True)

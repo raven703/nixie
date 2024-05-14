@@ -118,6 +118,7 @@ class NixieLamp:
         return True
     
     def display_digit_effect(self):
+
         def show_digit_slide():
             digit=0
             while True:
@@ -127,9 +128,6 @@ class NixieLamp:
                 digit += 1
                 if digit >9:
                     break
-            random_number = randint(1000, 9999)
-            self.display_number(str(random_number))
-            time.sleep(0.02)
       
         def show_random_number():
             for _ in range(5):
@@ -170,22 +168,15 @@ class NixieLamp:
                 for number in output_list:
                     self.display_number(number)
                     time.sleep(0.1)
-                    
-        prev_effect = 0
+   
         random_effect = randint(1, 3)
-        
         print(random_effect)
-        if random_effect == prev_effect:
-            random_effect = randint(1, 3)
-            
         if random_effect == 1:
             show_digit_slide()
         elif random_effect == 2:
             show_random_number()
         else:
             show_digit_count()
-        prev_effect = random_effect
-        
             
             
             
