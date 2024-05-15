@@ -14,6 +14,7 @@ class Config:
         self.SSID = config_data["SSID"]
         self.TIMEZONE = config_data["TIMEZONE"]
         self.ALARMS = config_data["ALARMS"]
+        self.PLAY_ALARM = False 
 
 
         
@@ -31,32 +32,51 @@ class Config:
         current_time = utime.time()
         alarm_datetime = utime.mktime((int(alarm_date[:4]), int(alarm_date[5:7]), int(alarm_date[8:10]), int(alarm_time[:2]), int(alarm_time[3:]), 0, 0, 0))
         time_difference = alarm_datetime - current_time
+        
+       
+        #print('alarm_name ', alarm_name)
+        #print('alarm_time ',alarm_time)
+        #print('alarm_date ',alarm_date)
+        #print('repeat_alarm',repeat_alarm)
     
-        if time_difference <= 0:
+        if time_difference <= 0 and not repeat_alarm:
             print(f"Triggering alarm {alarm_name} now!")
+            self.PLAY_ALARM = True
+            self.ALARMS[alarm_name]["time"] = ""
+            self.save_config()
+            return True 
+            
             # Code to trigger alarm goes here
-            if repeat_alarm:
-                # Assuming alarm repeats every day for simplicity
-                tomorrow = utime.localtime(current_time + 86400)
-                next_alarm_date = "{:04d}-{:02d}-{:02d}".format(tomorrow[0], tomorrow[1], tomorrow[2])
-                alarm_data['date'] = next_alarm_date
-                print("Alarm", alarm_name, "will repeat on", next_alarm_date)
-                self.ALARMS[alarm_name]["date"] = next_alarm_date
-                self.save_config()
-                
-                
-        else:
-            print("Alarm", alarm_name, "will trigger in", time_difference, "seconds.")
+        if time_difference <= 0 and repeat_alarm:
+            # Assuming alarm repeats every day for simplicity
+            tomorrow = utime.localtime(current_time + 86400)
+            next_alarm_date = "{:04d}-{:02d}-{:02d}".format(tomorrow[0], tomorrow[1], tomorrow[2])
+            alarm_data['date'] = next_alarm_date
+            #print("Alarm", alarm_name, "will repeat on", next_alarm_date)
+            self.ALARMS[alarm_name]["date"] = next_alarm_date
+            self.save_config()
+            self.PLAY_ALARM = True
+            return True 
+               
+        return False 
+            
+            #print("Alarm", alarm_name, "will trigger in", time_difference, "seconds.")
 
             
             
             
     def check_alarm(self):
         # Loop through alarms and trigger if not empty
+        result =[]
         for alarm_name, alarm_data in self.ALARMS.items():
             if alarm_data["time"] and alarm_data["date"]:
                 #alarm_time = f"{alarm_data['date']} {alarm_data['time']}"
-                self.trigger_alarm(alarm_name, alarm_data)
+                if self.trigger_alarm(alarm_name, alarm_data):
+                    return True
+        return False 
+                
+                
+
             
         
         

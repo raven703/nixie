@@ -20,6 +20,7 @@ import json
 from machine import Pin, PWM, RTC, ADC, Pin
 from utils import *
 from config import Config
+from buzzerplayer import BuzzerPlayer
 import time
 import random
 from nixie_lamps import NixieLamp
@@ -42,13 +43,21 @@ led_pin = 23
 blink_led = PWM(Pin(led_pin), freq=1000, duty=512)
 
 
-
-    
-    
-
 # set brightness level from settings
 settings = load_settings()
 config = Config()
+
+#initiate buzzer class
+
+buzzer = BuzzerPlayer(4)  # Change 4 to the pin number connected to your buzzer
+
+#buzzer.play(buzzer.IMPERIAL_MARCH_MELODY, 10000)  # Play the Star Wars main theme for 5 seconds
+#time.sleep(1)
+buzzer.play(buzzer.SHORT_BEEP, 1000)  
+buzzer.stop()
+
+
+
 
 brightness_levels = config.BRIGHTNESS_LEVELS
 # Ensure you have all four brightness values to pass to set_brightness
@@ -183,10 +192,10 @@ def show_time():
      lamp_3_pwm = lamp_nix.pwm_lamp_pins[3]
 
      lamp_nix.display_number('2024') # in string
-     print('duty is', lamp_0_pwm.duty())
-     print('duty is', lamp_1_pwm.duty())
-     print('duty is', lamp_2_pwm.duty())
-     print('duty is', lamp_3_pwm.duty())
+     #print('duty is', lamp_0_pwm.duty())
+     #print('duty is', lamp_1_pwm.duty())
+     #print('duty is', lamp_2_pwm.duty())
+     #print('duty is', lamp_3_pwm.duty())
      # Get current RTC time
      current_time = rtc.datetime()
      hour = current_time[4]
@@ -246,9 +255,13 @@ def show_random_number():
         time.sleep(200)
 
 def alarm_clock():
-    
     while True:
-        config.check_alarm()
+        if config.check_alarm():
+            print('play sound')
+            buzzer.play(buzzer.IMPERIAL_MARCH_MELODY, 10000)
+            time.sleep(0.5)
+        else:
+            pass
         time.sleep(2)  # Check every second
     
     
@@ -271,7 +284,7 @@ def show_blink_led():
 
 
 gc.collect()
-print(gc.mem_free())
+print(f'Memory free: {gc.mem_free()}')
 
 
 
