@@ -63,10 +63,12 @@ function handleFormSubmitBright(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
 
-            const invalidEntries = Array.from(formData.entries()).filter(([_, value]) => {
-                const numValue = parseInt(value, 10);
-                return isNaN(numValue) || numValue < 0 || numValue > 1023;
-            });
+    const invalidEntries = Array.from(formData.entries()).filter(([name, value]) => {
+        if (name !== "autoBright") {
+            const numValue = parseInt(value, 10);
+            return isNaN(numValue) || numValue < 0 || numValue > 1023;
+        }
+    });
 
             if (invalidEntries.length > 0) {
                 alert("Please ensure all brightness values are between 0 and 1023.");
@@ -99,6 +101,42 @@ function handleFormSubmitBright(event) {
             });
         }
 
+
+document.getElementById("alarmForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+     // Collect form data
+    const alarmsData = {};
+
+    // Collect data for each alarm
+    for (let i = 1; i <= 4; i++) {
+        const alarmData = {
+            time: document.getElementById(`alarm${i}-time`).value,
+            date: document.getElementById(`alarm${i}-date`).value,
+            repeat: document.getElementById(`alarm${i}-repeat`).checked
+        };
+        alarmsData[`alarm${i}`] = alarmData;
+    }
+
+    // Send data to the server
+    fetch("/set_alarms", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(alarmsData)
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log("Alarms set successfully");
+        } else {
+            console.error("Failed to set alarms");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
 
 
 function updateLabel(inputElement, labelId) {

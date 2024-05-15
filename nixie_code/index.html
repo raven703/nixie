@@ -3,56 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WiFi & Time Settings</title>
+  <title>Settings</title>
+  <link rel="stylesheet" type="text/css" href="/static/styles.css">
+ 
 </head>
 <body>
-  <h2>WiFi Credentials</h2>
-  <form id="wifiForm">
-    <label for="ssid">SSID:</label><br>
-    <input type="text" id="ssid" name="ssid"><br>
-  
-    <label for="pwd">Password:</label><br>
-    <input type="password" id="pwd" name="pwd"><br><br>
-
-    <input type="submit" value="Set WiFi">
-  </form>
-
-  <h2>Time Settings</h2>
-  <form id="timeForm">
-    <label for="date">Date:</label><br>
-    <input type="date" id="date" name="date"><br><br>
-  
-    <label for="time">Time:</label><br>
-    <input type="time" id="time" name="time"><br><br>
+  <div class="grid-container">
+    <div class="card">
+      <h2>WiFi Credentials</h2>
+      <form id="wifiForm">
+        <label for="ssid">SSID:</label><br>
+        <input type="text" id="ssid" name="ssid"><br>
+      
+        <label for="pwd">Password:</label><br>
+        <input type="password" id="pwd" name="pwd"><br><br>
     
-    <label for="timezone">TimeZone</label><br>
-    <input type="text" id="tmz" name="tmz"><br><br>
-  
-    <input type="submit" value="Set Time">
+        <input type="submit" value="Set WiFi">
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Time Settings</h2>
+      <form id="timeForm">
+        <label for="date">Date:</label><br>
+        <input type="date" id="date" name="date"><br><br>
+      
+        <label for="time">Time:</label><br>
+        <input type="time" id="time" name="time"><br><br>
+        
+        <label for="timezone">TimeZone</label><br>
+        <input type="text" id="tmz" name="tmz"><br><br>
+      
+        <input type="submit" value="Set Time">
+      </form>
+    </div>
+    
+    <div class="card">
+      <h2>Set Lamp Brightness</h2>
+      <form id="brightForm" onsubmit="handleFormSubmitBright(event)">
+          <label for="lamp1">Lamp 1 Brightness:</label><br>
+          <input type="range" id="lamp1" name="lamp1" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp1-value')">
+          <span id="lamp1-value">512</span><br><br>
+
+          <label for="lamp2">Lamp 2 Brightness:</label><br>
+          <input type="range" id="lamp2" name="lamp2" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp2-value')">
+          <span id="lamp2-value">512</span><br><br>
+
+          <label for="lamp3">Lamp 3 Brightness:</label><br>
+          <input type="range" id="lamp3" name="lamp3" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp3-value')">
+          <span id="lamp3-value">512</span><br><br>
+
+          <label for="lamp4">Lamp 4 Brightness:</label><br>
+          <input type="range" id="lamp4" name="lamp4" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp4-value')">
+          <span id="lamp4-value">512</span><br><br>
+          
+          <label for="autoBright">Auto Brightness:</label><br>
+          <input type="checkbox" id="autoBright" name="autoBright">
+          <br><br>
+
+          <input type="submit" value="Set Brightness">
+      </form>
+    </div>
+
+<div class="card">
+  <h2>Alarm Clocks</h2>
+  <form id="alarmForm">
+    <div class="alarm">
+      <label for="alarm1">Alarm 1:</label><br>
+      <input type="date" id="alarm1-date" name="alarm1-date">
+      <input type="time" id="alarm1-time" name="alarm1-time">
+      <input type="checkbox" id="alarm1-repeat" name="alarm1-repeat">
+      <label for="alarm1-repeat">Repeat everyday</label><br><br>
+    </div>
+
+    <div class="alarm">
+      <label for="alarm2">Alarm 2:</label><br>
+      <input type="date" id="alarm2-date" name="alarm2-date">
+      <input type="time" id="alarm2-time" name="alarm2-time">
+      <input type="checkbox" id="alarm2-repeat" name="alarm2-repeat">
+      <label for="alarm2-repeat">Repeat everyday</label><br><br>
+    </div>
+
+    <div class="alarm">
+      <label for="alarm3">Alarm 3:</label><br>
+      <input type="date" id="alarm3-date" name="alarm3-date">
+      <input type="time" id="alarm3-time" name="alarm3-time">
+      <input type="checkbox" id="alarm3-repeat" name="alarm3-repeat">
+      <label for="alarm3-repeat">Repeat everyday</label><br><br>
+    </div>
+
+    <div class="alarm">
+      <label for="alarm4">Alarm 4:</label><br>
+      <input type="date" id="alarm4-date" name="alarm4-date">
+      <input type="time" id="alarm4-time" name="alarm4-time">
+      <input type="checkbox" id="alarm4-repeat" name="alarm4-repeat">
+      <label for="alarm4-repeat">Repeat everyday</label><br><br>
+    </div>
+
+    <input type="submit" value="Set Alarms">
   </form>
+</div>
+
+
+    </div>
+  </div>
   
- <h1>Set Lamp Brightness</h1>
-
-<form id="brightForm" onsubmit="handleFormSubmitBright(event)">
-    <label for="lamp1">Lamp 1 Brightness:</label><br>
-    <input type="range" id="lamp1" name="lamp1" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp1-value')">
-    <span id="lamp1-value">512</span><br><br>
-
-    <label for="lamp2">Lamp 2 Brightness:</label><br>
-    <input type="range" id="lamp2" name="lamp2" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp2-value')">
-    <span id="lamp2-value">512</span><br><br>
-
-    <label for="lamp3">Lamp 3 Brightness:</label><br>
-    <input type="range" id="lamp3" name="lamp3" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp3-value')">
-    <span id="lamp3-value">512</span><br><br>
-
-    <label for="lamp4">Lamp 4 Brightness:</label><br>
-    <input type="range" id="lamp4" name="lamp4" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp4-value')">
-    <span id="lamp4-value">512</span><br><br>
-
-    <input type="submit" value="Set Brightness">
-</form>
-
-  <script src="/static/script.js"></script>
+   <script src="/static/script.js"></script>
 </body>
 </html>

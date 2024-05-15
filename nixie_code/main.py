@@ -21,7 +21,7 @@ from machine import Pin, PWM, RTC, ADC, Pin
 from utils import *
 from config import Config
 import time
-#import random
+import random
 from nixie_lamps import NixieLamp
 import _thread  # MicroPython threading
 import gc
@@ -110,6 +110,20 @@ def set_brightness(request):
     #print(brightness_levels.get('autoBright'))
     
     return {'brightness': 'saved'}
+
+@app.route('/set_alarms', methods=['GET', 'POST'])
+def set_alarms(request):
+    alarms = request.json
+    
+    all_alarms = {"alarm1": alarms.get("alarm1", 0),
+              "alarm2": alarms.get("alarm2", 0),
+              "alarm3": alarms.get("alarm3", 0),
+              "alarm4": alarms.get("alarm4", 0),}
+    print(all_alarms)
+    
+    config.update_config(ALARMS = all_alarms)
+    
+
 
 
 @app.route('/set_time', methods=['GET', 'POST'])
@@ -223,7 +237,7 @@ def show_time():
              current_time = rtc.datetime()
              seconds = current_time[6]
              lamp_nix.display_seconds(f'00{seconds:02d}')
-             print(f'00{seconds:02d}')
+             #print(f'00{seconds:02d}')
              time.sleep(1)
              
 def show_random_number():
@@ -231,17 +245,30 @@ def show_random_number():
         lamp_nix.display_digit_effect()     
         time.sleep(200)
 
+def alarm_clock():
+    
+    while True:
+        config.check_alarm()
+        time.sleep(2)  # Check every second
+    
+    
+    
+
 
 def show_blink_led():
+    blink_led.freq(1000)
+    period = 2
+   
+    def calculate_duty_cycle(period): # function calculates the duty cycle of the PWM signal based on the current time and the specified period. 
+        # Calculate the duty cycle as a percentage
+        duty_cycle = 100 * (1 - abs((time.time() % period) / period - 0.5) * 2)
+        return int(duty_cycle * 5.23)  # Convert percentage to 0-1023 range
+
     while True:
-        # Increase duty cycle from 0 to 1023 (maximum brightness)
-        for duty_cycle in range(812):
-            blink_led.duty(duty_cycle)
-            time.sleep(0.001)  # Wait a short time
-        # Decrease duty cycle from 1023 to 0
-        for duty_cycle in range(812, -1, -1):
-            blink_led.duty(duty_cycle)
-            time.sleep(0.001)  # Wait a short time
+        duty_cycle = calculate_duty_cycle(period)
+        blink_led.duty(duty_cycle)
+        time.sleep(0.01)  # Adjust the sleep time for smoother transition
+
 
 gc.collect()
 print(gc.mem_free())
@@ -254,6 +281,7 @@ print(gc.mem_free())
 _thread.start_new_thread(show_time, ())
 _thread.start_new_thread(show_random_number, ())
 _thread.start_new_thread(show_blink_led, ())
+_thread.start_new_thread(alarm_clock, ())
 
 # Start the Microdot web server
 app.run(port=80, debug=True)
