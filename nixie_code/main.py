@@ -14,7 +14,9 @@
 
 
 
-from microdot1 import Microdot, send_file, Response, Request
+from microdot import Microdot, send_file, Response #, Request
+import asyncio
+
 import json
 
 from machine import Pin, PWM, RTC, ADC, Pin
@@ -24,7 +26,7 @@ from buzzerplayer import BuzzerPlayer
 import time
 import random
 from nixie_lamps import NixieLamp
-import _thread  # MicroPython threading
+#import _thread  # MicroPython threading
 import gc
 
 
@@ -41,6 +43,7 @@ lamp_nix = NixieLamp(brightness=612) # prepare Nixie class, 200 duty cycle, brig
 
 led_pin = 23
 blink_led = PWM(Pin(led_pin), freq=1000, duty=512)
+PERIOD = 2
 
 
 # set brightness level from settings
@@ -56,6 +59,7 @@ buzzer = BuzzerPlayer(4)  # Change 4 to the pin number connected to your buzzer
 buzzer.play(buzzer.SHORT_BEEP, 1000)  
 buzzer.stop()
 
+app = Microdot()
 
 
 
@@ -128,9 +132,25 @@ def set_alarms(request):
               "alarm2": alarms.get("alarm2", 0),
               "alarm3": alarms.get("alarm3", 0),
               "alarm4": alarms.get("alarm4", 0),}
-    print(all_alarms)
-    
+    print('alarm set:', all_alarms)
     config.update_config(ALARMS = all_alarms)
+    
+    binary_number = 0b0000
+
+    # Iterate over alarm_configs and set the corresponding bit to 1 if 'time' is not empty
+    for i in range(1, 5):
+        alarm_key = f'alarm{i}'
+        if all_alarms[alarm_key]['time']:
+            binary_number |= 1 << (4 - i)  # Set the corresponding bit to 1
+    
+    lamp_nix.display_number(bin(binary_number)[2:], flash=True)
+    time.sleep(2)
+    
+    
+    
+    
+    
+    
     
 
 
@@ -184,7 +204,7 @@ def set_time(request):
 
 # Thread functions
 
-def show_time():
+async def show_time():
      pwm_lamp_pins = lamp_nix.pwm_lamp_pins
      lamp_0_pwm = lamp_nix.pwm_lamp_pins[0]
      lamp_1_pwm = lamp_nix.pwm_lamp_pins[1]
@@ -192,37 +212,16 @@ def show_time():
      lamp_3_pwm = lamp_nix.pwm_lamp_pins[3]
 
      lamp_nix.display_number('2024') # in string
-     #print('duty is', lamp_0_pwm.duty())
-     #print('duty is', lamp_1_pwm.duty())
-     #print('duty is', lamp_2_pwm.duty())
-     #print('duty is', lamp_3_pwm.duty())
-     # Get current RTC time
      current_time = rtc.datetime()
      hour = current_time[4]
      minute = current_time[5]
      second = current_time[6]
      print(f"@from async: Current time (hr:min): {hour:02d}:{minute:02d}")
+      
+     random_number_interval = 10 * 60  # 10 minutes in seconds to show random effects
+     random_number_timer = random_number_interval
      
-     # Function to map ADC value to lamp brightness
-     def map_adc_to_brightness(adc_value):
-        # ADC range is 0 to 2600
-        # Lamp brightness range is 100 to 1023
-        # Linear mapping formula
-        adc_min = 1800
-        adc_max = 4096
-        brightness_min = 50
-        brightness_max = 1023
-
-        # Calculate brightness based on ADC value
-        if adc_value < adc_min:
-            adc_value = adc_min
-        elif adc_value > adc_max:
-            adc_value = adc_max
-           # Interpolate to get the corresponding brightness value
-        brightness = brightness_min + (adc_value - adc_min) * (brightness_max - brightness_min) / (adc_max - adc_min)
-    
-        return int(brightness)  # Ensure it's an integer
-     
+   
      while True:
          for _ in range(10):  # Display current time for 1 minute
              current_time = rtc.datetime()
@@ -240,37 +239,30 @@ def show_time():
                  
              else:
                  pass
-             time.sleep(6)
+             # check alarm
+             if config.check_alarm():
+                 print('play sound')
+                 buzzer.play(buzzer.IMPERIAL_MARCH_MELODY, 10000)
+                 
+             await asyncio.sleep(6)
+             random_number_timer -= 6
              
          for _ in range(7):  # Wait for 5 seconds
              current_time = rtc.datetime()
              seconds = current_time[6]
              lamp_nix.display_seconds(f'00{seconds:02d}')
              #print(f'00{seconds:02d}')
-             time.sleep(1)
+             await asyncio.sleep(1)
+             random_number_timer -= 6
              
-def show_random_number():
-    while True:
-        lamp_nix.display_digit_effect()     
-        time.sleep(200)
+         if random_number_timer <= 0:
+            lamp_nix.display_digit_effect() 
+            random_number_timer = random_number_interval
+             
 
-def alarm_clock():
-    while True:
-        if config.check_alarm():
-            print('play sound')
-            buzzer.play(buzzer.IMPERIAL_MARCH_MELODY, 10000)
-            time.sleep(0.5)
-        else:
-            pass
-        time.sleep(2)  # Check every second
-    
-    
-    
-
-
-def show_blink_led():
+async def show_blink_led():
     blink_led.freq(1000)
-    period = 2
+    
    
     def calculate_duty_cycle(period): # function calculates the duty cycle of the PWM signal based on the current time and the specified period. 
         # Calculate the duty cycle as a percentage
@@ -278,27 +270,39 @@ def show_blink_led():
         return int(duty_cycle * 5.23)  # Convert percentage to 0-1023 range
 
     while True:
-        duty_cycle = calculate_duty_cycle(period)
+        duty_cycle = calculate_duty_cycle(PERIOD)
         blink_led.duty(duty_cycle)
-        time.sleep(0.01)  # Adjust the sleep time for smoother transition
-
+        await asyncio.sleep(1)  # Adjust the sleep time for smoother transition
+        
+        
+        
 
 gc.collect()
 print(f'Memory free: {gc.mem_free()}')
 
 
 
+async def start_server():
+    try:
+        await app.start_server(port=80, debug=True)
+    except OSError as e:
+        print(f"Failed to start server: {e}")
+        
+
+
+async def main():
+    # Run the Microdot web server in the background
+    server_task = asyncio.create_task(start_server())
+    # Run the show_time function concurrently
+    show_time_task = asyncio.create_task(show_time())
+    blink_led_task = asyncio.create_task(show_blink_led())
+   
+    # Wait for all tasks to complete
+    await asyncio.gather(server_task, show_time_task, blink_led_task)
     
+
+# Start the asyncio event loop
+asyncio.run(main())
     
-# Start the threads
-_thread.start_new_thread(show_time, ())
-_thread.start_new_thread(show_random_number, ())
-_thread.start_new_thread(show_blink_led, ())
-_thread.start_new_thread(alarm_clock, ())
-
-# Start the Microdot web server
-app.run(port=80, debug=True)
 
 
-
-    

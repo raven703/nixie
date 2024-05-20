@@ -65,7 +65,7 @@ class NixieLamp:
     
     
 
-    def display_digit(self, digit, lamp_number=0):
+    def display_digit(self, digit, lamp_number=0, flash=False):
         if digit < 0 or digit > 9:
             raise ValueError("Digit must be between 0 and 9")
         
@@ -83,7 +83,11 @@ class NixieLamp:
         result = str(formatted_output)
         hex_value = int(binary_string, 2)
         self.sr.bits(hex_value, self.num_bits, 1)
+        if flash:
+            self.flash()
         return True
+    
+     
     
     def display_off(self): # send 40 bits to close all shift registers
         self.sr.bits(0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
@@ -100,7 +104,7 @@ class NixieLamp:
          self.sr.bits(result, self.num_bits, 1)
          return True
 
-    def display_number(self, number):        
+    def display_number(self, number, flash = False ):        
         digits = [int(i) for i in str(number)]
         
         int_0 = int(self.get_digit_code(digits[0], self.lamp_0_shift), 2)
@@ -115,7 +119,22 @@ class NixieLamp:
         result = int_0 | int_1 | int_2 | int_3
         
         self.sr.bits(result, self.num_bits, 1)
+        if flash:
+            self.flash(result)
         return True
+    
+    def flash(self, number_to_flash):
+        duration = 0.001  # duration of each brightness level change
+        brightness_range = range(100, 1000)
+        
+        for i in range(5):
+            self.set_lamps_off()
+            time.sleep(0.5)
+            self.set_lamps_max()
+            self.sr.bits(number_to_flash, self.num_bits, 1)
+            time.sleep(1)
+
+       
     
     def display_digit_effect(self):
         def show_digit_slide():
@@ -185,11 +204,7 @@ class NixieLamp:
         else:
             show_digit_count()
         prev_effect = random_effect
-        
-            
-            
-            
-
+  
         return True 
 
     

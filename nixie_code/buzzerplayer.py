@@ -28,7 +28,7 @@ class BuzzerPlayer:
         ('D5', 200), ('00', 100), ('B4', 200), ('00', 300),
         ('D4', 100), ('F#4', 100), ('00', 100), ('G4', 100), ('00', 100), ('A4', 100), ('00', 300),
         ('D5', 200), ('00', 100), ('B4', 200), ('00', 300),
-        ('F#5', 100), ('00', 100), ('G5', 100), ('00', 100), ('A5', 100), ('00', 100), ('D5', 100), ('00', 100),
+        ('F#5', 200), ('G5', 200), ('A5', 200), ('D5', 100), ('00', 100),
         ('D5', 100), ('E5', 100), ('F#5', 100), ('E5', 100),
         ('00', 1000)]
         
@@ -42,22 +42,25 @@ class BuzzerPlayer:
     def play_tone(self, frequency, duration):
         self.pwm.duty(512)
         self.pwm.freq(frequency)
-        #self.pwm.duty(512)
         time.sleep_ms(duration)
         
         
     def play(self, melody, duration):
+        self.start()
         total_duration = 0
         for note, note_duration in melody:
             if total_duration + note_duration > duration:
                 break
             self.play_tone(self.NOTES[note], note_duration)
             total_duration += note_duration
-        self.pwm.duty(0)       
+        self.pwm.duty(0)
         
     def stop(self):
         #self.pwm.deinit()
         self.pwm.duty(0)
+        
+    def start(self):
+        self.pwm = PWM(self.pin)
         
 
 
