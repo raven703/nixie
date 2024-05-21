@@ -8,6 +8,7 @@
  
 </head>
 <body>
+  <div class="grid-container">
     <div class="card">
       <h2>WiFi Credentials</h2>
       <form id="wifiForm">
@@ -37,6 +38,33 @@
       </form>
     </div>
     
+    <div class="card">
+      <h2>Set Lamp Brightness</h2>
+      <form id="brightForm" onsubmit="handleFormSubmitBright(event)">
+          <label for="lamp1">Lamp 1 Brightness:</label><br>
+          <input type="range" id="lamp1" name="lamp1" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp1-value')">
+          <span id="lamp1-value">512</span><br><br>
+
+          <label for="lamp2">Lamp 2 Brightness:</label><br>
+          <input type="range" id="lamp2" name="lamp2" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp2-value')">
+          <span id="lamp2-value">512</span><br><br>
+
+          <label for="lamp3">Lamp 3 Brightness:</label><br>
+          <input type="range" id="lamp3" name="lamp3" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp3-value')">
+          <span id="lamp3-value">512</span><br><br>
+
+          <label for="lamp4">Lamp 4 Brightness:</label><br>
+          <input type="range" id="lamp4" name="lamp4" min="0" max="1023" value="512" oninput="updateLabel(this, 'lamp4-value')">
+          <span id="lamp4-value">512</span><br><br>
+          
+          <label for="autoBright">Auto Brightness:</label><br>
+          <input type="checkbox" id="autoBright" name="autoBright">
+          <br><br>
+
+          <input type="submit" value="Set Brightness">
+      </form>
+    </div>
+
 <div class="card">
   <h2>Alarm Clocks</h2>
   <form id="alarmForm">
@@ -77,8 +105,9 @@
 </div>
 
 
+    </div>
+  </div>
   
    <script src="/static/script.js"></script>
 </body>
 </html>
-
