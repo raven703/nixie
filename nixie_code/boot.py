@@ -4,9 +4,10 @@
 #import webrepl
 #webrepl.start()
 from wifinet import *
-from machine import Pin, RTC
+from machine import Pin, RTC, freq
 import time
 from nixie_lamps import NixieLamp
+import esp32
 
 lamp_nix = NixieLamp() # prepare Nixie class
 
@@ -52,4 +53,9 @@ else:
     
 
 setup_RTC()
-
+# Disable WiFi sleep mode
+esp32.wake_on_ext0(pin = None, level = 0)
+# Set CPU frequency to maximum to disable modem sleep
+#freq(240000000)
+# If you want to disable the modem sleep as well
+#esp32.set_modem_sleep(0)

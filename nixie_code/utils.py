@@ -3,7 +3,7 @@ def load_settings():
     with open('boot.ini', 'r') as file:
         return json.load(file)
     
- def map_adc_to_brightness(adc_value):      # Function to map ADC value to lamp brightness
+def map_adc_to_brightness(adc_value):      # Function to map ADC value to lamp brightness
     # ADC range is 0 to 2600
     # Lamp brightness range is 100 to 1023
     # Linear mapping formula

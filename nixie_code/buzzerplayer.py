@@ -40,9 +40,11 @@ class BuzzerPlayer:
         self.pwm = PWM(self.pin)
 
     def play_tone(self, frequency, duration):
+        self.start()
         self.pwm.duty(512)
         self.pwm.freq(frequency)
         time.sleep_ms(duration)
+        
         
         
     def play(self, melody, duration):
@@ -53,11 +55,11 @@ class BuzzerPlayer:
                 break
             self.play_tone(self.NOTES[note], note_duration)
             total_duration += note_duration
-        self.pwm.duty(0)
+        self.stop()
         
     def stop(self):
-        #self.pwm.deinit()
-        self.pwm.duty(0)
+        self.pwm.deinit()
+        #self.pwm.duty(0)
         
     def start(self):
         self.pwm = PWM(self.pin)
