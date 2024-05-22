@@ -106,6 +106,26 @@ function handleFormSubmitBright(event) {
         }
 
 
+document.addEventListener("DOMContentLoaded", function() {
+    // Fetch active alarms from the backend and fill the form
+    fetch("/get_alarms")
+        .then(response => response.json())
+        .then(data => {
+            for (let i = 1; i <= 4; i++) {
+                const alarm = data[`alarm${i}`];
+                if (alarm) {
+                    document.getElementById(`alarm${i}-time`).value = alarm.time || '';
+                    document.getElementById(`alarm${i}-date`).value = alarm.date || '';
+                    document.getElementById(`alarm${i}-repeat`).checked = alarm.repeat || false;
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching alarms:", error);
+        });
+      
+
+
 document.getElementById("alarmForm").addEventListener("submit", function(event) {
     event.preventDefault(); // Prevent default form submission
 
@@ -144,6 +164,7 @@ document.getElementById("alarmForm").addEventListener("submit", function(event) 
     });
 });
 
+});
 
 function updateLabel(inputElement, labelId) {
     const labelElement = document.getElementById(labelId);

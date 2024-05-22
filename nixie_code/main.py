@@ -124,6 +124,13 @@ def set_brightness(request):
     
     return {'brightness': 'saved'}
 
+@app.route('/get_alarms', methods=['GET'])
+async def get_alarms(request):
+    alarms = config.ALARMS
+    return Response(alarms, headers={'Content-Type': 'application/json'})
+
+
+
 @app.route('/set_alarms', methods=['GET', 'POST'])
 async def set_alarms(request):
     async def display_alarm_number(binary_number):

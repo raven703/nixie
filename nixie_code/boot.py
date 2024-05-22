@@ -1,8 +1,8 @@
 # This file is executed on every boot (including wake-boot from deepsleep)
 #import esp
 #esp.osdebug(None)
-#import webrepl
-#webrepl.start()
+import webrepl
+webrepl.start()
 from wifinet import *
 from machine import Pin, RTC, freq
 import time
