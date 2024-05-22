@@ -15,6 +15,7 @@
 
 
 from microdot import Microdot, send_file, Response #, Request
+from wifinet import synchronize_time as sync_time
 import asyncio
 
 import json
@@ -241,6 +242,9 @@ async def show_time():
      
    
      while True:
+         current_hour = time.localtime()[3]  # Get the current hour
+         if current_hour == 23:
+             sync_time()
          for _ in range(10):  # Display current time for 1 minute
              current_time = rtc.datetime()
              hour = current_time[4]
@@ -288,8 +292,12 @@ async def show_blink_led():
         return int(duty_cycle * 5.23)  # Convert percentage to 0-1023 range
 
     while True:
-        duty_cycle = calculate_duty_cycle(PERIOD)
-        blink_led.duty(duty_cycle)
+        current_hour = time.localtime()[3]  # Get the current hour
+        if 23 <= current_hour or current_hour < 6:
+            blink_led.duty(0)  # Turn off the LED
+        else:
+            duty_cycle = calculate_duty_cycle(PERIOD)
+            blink_led.duty(duty_cycle)
         await asyncio.sleep(1)  # Adjust the sleep time for smoother transition
         
         
