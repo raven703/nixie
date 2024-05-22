@@ -125,7 +125,14 @@ def set_brightness(request):
     return {'brightness': 'saved'}
 
 @app.route('/set_alarms', methods=['GET', 'POST'])
-def set_alarms(request):
+async def set_alarms(request):
+    async def display_alarm_number(binary_number):
+        await asyncio.sleep(1)
+        if binary_number == '0000':
+            lamp_nix.display_number(binary_number, flash=True)
+        else:
+            lamp_nix.display_number(bin(binary_number)[2:], flash=True)
+    
     alarms = request.json
     
     all_alarms = {"alarm1": alarms.get("alarm1", 0),
@@ -136,15 +143,19 @@ def set_alarms(request):
     config.update_config(ALARMS = all_alarms)
     
     binary_number = 0b0000
-
     # Iterate over alarm_configs and set the corresponding bit to 1 if 'time' is not empty
     for i in range(1, 5):
         alarm_key = f'alarm{i}'
         if all_alarms[alarm_key]['time']:
             binary_number |= 1 << (4 - i)  # Set the corresponding bit to 1
+    # Ensure binary_number is 0b0000 if it is 0b0
+    if binary_number == 0:        
+        binary_number = '0000'
     
-    lamp_nix.display_number(bin(binary_number)[2:], flash=True)
-    time.sleep(2)
+     # Schedule the async display function
+    asyncio.create_task(display_alarm_number(binary_number))
+    # return Response('', 204)
+    #time.sleep(2)
     
     
     

@@ -6,7 +6,7 @@ document.getElementById('wifiForm').addEventListener('submit', function(event) {
     wifiDataJson[key] = value;
   });
 
-  // Replace with your actual backend URL for saving WiFi credentials
+  // Backend URL for saving WiFi credentials
   fetch('/save_wifi', {
     method: 'POST',
     headers: {
@@ -21,10 +21,12 @@ document.getElementById('wifiForm').addEventListener('submit', function(event) {
     return response.json();
   })
   .then(data => {
-    console.log('WiFi credentials saved:', data);
+    // console.log('WiFi credentials saved:', data);
+    alert('WiFi credentials saved: ' + data);
   })
   .catch(error => {
-    console.error('Error saving WiFi credentials:', error);
+    // console.error('Error saving WiFi credentials:', error);
+    alert('Error saving WiFi credentials:', error);
   });
 });
 
@@ -51,10 +53,12 @@ document.getElementById('timeForm').addEventListener('submit', function(event) {
     return response.json();
   })
   .then(data => {
-    console.log('Time settings saved:', data);
+    // console.log('Time settings saved:', data);
+    alert('Time settings saved:', data);
   })
   .catch(error => {
-    console.error('Error saving time settings:', error);
+    // console.error('Error saving time settings:', error);
+    alert('Error saving time settings:', error);
   });
 });
 
@@ -129,8 +133,10 @@ document.getElementById("alarmForm").addEventListener("submit", function(event) 
     .then(response => {
         if (response.ok) {
             console.log("Alarms set successfully");
+            alert("Alarms set successfully");
         } else {
-            console.error("Failed to set alarms");
+            // console.error("Failed to set alarms");
+            alarm("Failed to set alarms");
         }
     })
     .catch(error => {

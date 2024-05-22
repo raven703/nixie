@@ -1,127 +1,74 @@
-/* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 
-/* Style for card-like design */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
 .card {
-  border-radius: 10px;
+  background: #fff;
+  border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin: 20px;
-  background-color: #f9f9f9;
+  max-width: 300px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Style for form labels */
+.card h2 {
+  margin-top: 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
 label {
-  font-weight: bold;
+  margin-top: 10px;
 }
 
-/* Style for form inputs */
 input[type="text"],
 input[type="password"],
 input[type="date"],
 input[type="time"],
-input[type="range"],
-input[type="checkbox"] {
-  width: calc(100% - 16px); /* Adjust width to fit card padding */
-  padding: 8px;
-  margin: 5px 0;
-  box-sizing: border-box;
+input[type="submit"] {
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
-/* Style for submit button */
 input[type="submit"] {
-  width: auto;
-  padding: 10px 20px;
   background-color: #4CAF50;
   color: white;
-  border: none;
-  border-radius: 5px;
   cursor: pointer;
+  margin-top: 15px;
 }
 
-/* Style for grid layout */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Divide screen into two columns */
-  grid-gap: 20px; /* Add gap between grid items */
+input[type="submit"]:hover {
+  background-color: #45a049;
 }
 
-@media only screen and (min-width: 768px) {
-  /* For screens wider than 768px, divide into four columns */
-  .grid-container {
-    grid-template-columns: repeat(4, 1fr); /* Divide screen into four columns */
+@media (max-width: 768px) {
+  .card-container {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .card {
+      max-width: 100%;
   }
 }
-
-
-body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .grid-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-gap: 20px;
-      max-width: 800px;
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .card {
-      border: 1px solid #ccc;
-      padding: 15px;
-      border-radius: 8px;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      max-width: 300px;
-      width: 100%;
-    }
-    .grid-item-1 {
-      grid-column: span 2;
-      display: flex;
-      justify-content: space-between;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 10px;
-    }
-    .form-row {
-      display: flex;
-      justify-content: space-between;
-    }
-    .form-row .form-group {
-      flex: 1;
-      margin-right: 10px;
-    }
-    .form-row .form-group:last-child {
-      margin-right: 0;
-    }
-    h2, h3 {
-      font-size: 18px;
-      margin-top: 0;
-    }
-    label, input {
-      font-size: 14px;
-    }
-    input[type="submit"] {
-      font-size: 14px;
-      padding: 5px 10px;
-    }
-    input[type="text"],
-    input[type="password"],
-    input[type="date"],
-    input[type="time"],
-    input[type="checkbox"],
-    select {
-      width: 100%; /* Adjusted width of input fields */
-      padding: 8px; /* Added padding for better readability */
-      box-sizing: border-box; /* Ensures padding and border are included in width */
-    }
-    
